@@ -16,9 +16,6 @@ class Cook(AbstractUser):
 class DishType(models.Model):
     name = models.CharField(max_length=63)
 
-    def get_absolute_url(self):
-        return reverse("app:dish-detail", kwargs={"pk": self.pk})
-
     def __str__(self):
         return self.name
 
@@ -29,6 +26,10 @@ class Dish(models.Model):
     description = models.TextField(blank=True, null=True)
     dish_type = models.ForeignKey(DishType, on_delete=models.CASCADE)
     cook = models.ManyToManyField(Cook, related_name="dishes")
+    image = models.ImageField(upload_to="media/", null=True, blank=True)
 
     def __str__(self):
         return f"{self.name} {self.dish_type.name}"
+
+    def get_absolute_url(self):
+        return reverse("app:dish-detail", kwargs={"pk": self.pk})

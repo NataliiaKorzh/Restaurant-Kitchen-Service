@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 
-from app.models import Cook
+from app.models import Cook, Dish
 
 
 class CookCreationForm(UserCreationForm):
@@ -51,3 +51,9 @@ class DishTypeSearchForm(forms.Form):
             }
         )
     )
+
+
+class DishForm(forms.ModelForm):
+    class Meta:
+        model = Dish
+        fields = ["name", "image"]
