@@ -1,4 +1,3 @@
-from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
@@ -6,7 +5,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views import generic
 
-from app.forms import CookSearchForm, DishTypeSearchForm, DishSearchForm
+from app.forms import CookSearchForm, DishTypeSearchForm, DishSearchForm, DishForm
 from app.models import Cook, DishType, Dish
 
 
@@ -54,6 +53,7 @@ class CookListView(LoginRequiredMixin, generic.ListView):
 
 class CookDetailView(LoginRequiredMixin, generic.DetailView):
     model = Cook
+    paginate_by = 5
 
 
 class CookCreateView(LoginRequiredMixin, generic.CreateView):
@@ -147,7 +147,7 @@ class DishUpdateView(LoginRequiredMixin, generic.UpdateView):
 
 
 class DishDeleteView(LoginRequiredMixin, generic.DeleteView):
-    model = DishType
+    model = Dish
     success_url = reverse_lazy("app:dish-list")
 
 
@@ -167,29 +167,12 @@ def toggle_assign_to_dish(request, pk):
     return HttpResponseRedirect(reverse_lazy("app:dish-detail", args=[pk]))
 
 
-def login_view(request):
-    if request.method == "GET":
-        return render(request, "registration/login.html")
-    elif request.method == "POST":
-        username = request.POST.get("username")
-        password = request.POST.get("password")
-        if username is None or password is None:
-            error_context = {
-                "error": "Please provide both username and password"
-            }
-            return render(request, "registration/login.html", error_context)
-
-        user = authenticate(username=username, password=password)
-        if user:
-            login(request, user)
-            return redirect("app:index")
-        else:
-            error_context = {
-                "error": "Invalid username or password"
-            }
-            return render(request, "registration/login.html", error_context)
-
-
-def logout_view(request: HttpRequest) -> HttpResponse:
-    logout(request)
-    return render(request, "registration/logged_out.html")
+def add_dish(request):
+    if request.method == "POST":
+        form = DishForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect("dish_list")
+    else:
+        form = DishForm()
+    return render(request, "app/dish_form.html", {"form": form})
