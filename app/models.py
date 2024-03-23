@@ -23,8 +23,8 @@ class DishType(models.Model):
 class Dish(models.Model):
     name = models.CharField(max_length=63)
     price = models.DecimalField(max_digits=5, decimal_places=2)
-    description = models.TextField(blank=True, null=True)
-    dish_type = models.ForeignKey(DishType, on_delete=models.CASCADE)
+    description = models.CharField(max_length=255, blank=True, null=True)
+    dish_type = models.ForeignKey(DishType, on_delete=models.CASCADE, related_name="dishes")
     cook = models.ManyToManyField(Cook, related_name="dishes")
     image = models.ImageField(upload_to="media/", null=True, blank=True)
 

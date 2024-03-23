@@ -6,6 +6,7 @@ from app.forms import (
     CookCreationForm,
     CookSearchForm,
     DishTypeSearchForm,
+    DishForm
 )
 
 from app.models import DishType
@@ -59,7 +60,13 @@ class DishFormTest(TestCase):
             username="John",
             years_of_experience=3
         )
-        self.cook2 = get_user_model().objects.create(
-            username="Alice",
-            years_of_experience=2
-        )
+
+    def test_form_validation(self):
+        form = DishForm(data={
+            "name": "Test_name",
+            "price": "10.00",
+            "description": "Test description",
+            "dish_type": self.dish_type,
+            "cook": self.cook1
+        })
+        self.assertTrue(form.is_valid())

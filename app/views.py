@@ -12,17 +12,10 @@ from app.models import Cook, DishType, Dish
 @login_required
 def index(request: HttpRequest) -> HttpResponse:
 
-    num_cooks = Cook.objects.count()
-    num_dish_types = DishType.objects.count()
-    num_dishes = Dish.objects.count()
-
     num_visits = request.session.get("num_visits", 0)
     request.session["num_visits"] = num_visits + 1
 
     context = {
-        "num_cooks": num_cooks,
-        "num_dish_types": num_dish_types,
-        "num_dishes": num_dishes,
         "num_visits": num_visits + 1,
     }
 
@@ -33,7 +26,7 @@ class CookListView(LoginRequiredMixin, generic.ListView):
     model = Cook
     paginate_by = 10
 
-    def get_context_data(self, *, object_list=None, **kwargs):
+    def get_context_data(self, *args, object_list=None, **kwargs):
         context = super(CookListView, self).get_context_data(**kwargs)
         username = self.request.GET.get("username", "")
         context["cooks"] = CookSearchForm(
@@ -48,6 +41,7 @@ class CookListView(LoginRequiredMixin, generic.ListView):
             return queryset.filter(
                 username__icontains=form.cleaned_data["username"]
             )
+
         return queryset
 
 
@@ -92,6 +86,7 @@ class DishTypeListView(LoginRequiredMixin, generic.ListView):
             return queryset.filter(
                 name__icontains=form.cleaned_data["name"]
             )
+
         return queryset
 
 
@@ -131,6 +126,7 @@ class DishListView(LoginRequiredMixin, generic.ListView):
             return queryset.filter(
                 name__icontains=form.cleaned_data["name"]
             )
+
         return queryset
 
 
@@ -157,22 +153,25 @@ class DishDetailView(LoginRequiredMixin, generic.DetailView):
 
 @login_required
 def toggle_assign_to_dish(request, pk):
-    cook = Cook.objects.get(id=request.user.id)
-    if (
-        Dish.objects.get(id=pk) in cook.dishes.all()
-    ):
-        cook.dishes.remove(pk)
+    cook = get_object_or_404(Cook, id=request.user.id)
+    dish = get_object_or_404(Dish, id=pk)
+
+    if cook.dishes.filter(id=pk).exists():
+        cook.dishes.remove(dish)
     else:
-        cook.dishes.add(pk)
+        cook.dishes.add(dish)
+
     return HttpResponseRedirect(reverse_lazy("app:dish-detail", args=[pk]))
 
 
 def add_dish(request):
     if request.method == "POST":
         form = DishForm(request.POST, request.FILES)
+
         if form.is_valid():
             form.save()
             return redirect("dish_list")
     else:
         form = DishForm()
+
     return render(request, "app/dish_form.html", {"form": form})

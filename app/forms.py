@@ -5,6 +5,7 @@ from app.models import Cook, Dish
 
 
 class CookCreationForm(UserCreationForm):
+
     class Meta(UserCreationForm.Meta):
         model = Cook
         fields = UserCreationForm.Meta.fields + (
@@ -54,6 +55,7 @@ class DishTypeSearchForm(forms.Form):
 
 
 class DishForm(forms.ModelForm):
+
     class Meta:
         model = Dish
         fields = ["name", "image"]
