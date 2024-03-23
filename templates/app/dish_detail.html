@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>
+    Name: {{ dish.name }}
+    <a href="{% url 'app:dish-delete' pk=dish.id %}" class="btn btn-danger link-to-page">
+      Delete
+    </a>
+
+    <a href="{% url 'app:dish-update' pk=dish.id %}" class="btn btn-secondary link-to-page">
+      Update
+    </a>
+  </h1>
+  
+  <p><strong>Dish type:</strong> {{ dish.dish_type }}</p>
+  <p><strong>Price:</strong> {{ dish.price }}</p>
+  <p><strong>Cooks:</strong>
+    {% for cook in dish.cook.all %}
+            {{ cook.first_name }} {{ cook.last_name }}
+    {% endfor %}
+  </p>
+  <p><strong>Description:</strong> {{ dish.description }}</p>
+  
+  {% if dish.image %}
+    <div class="image-container">
+      <img class="max-size-image" src="{{ dish.image.url }}" alt="Image of {{ dish.name }}">
+    </div>
+  {% endif %}
+  
+{% endblock %}

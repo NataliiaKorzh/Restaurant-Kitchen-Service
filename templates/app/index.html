@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+        <h1 class="main-title">Restaurant Kitchen</h1>
+        <p class="welcome-text">Welcome to Best Restaurant Kitchen Ever!</p>
+    <p>Welcome to our charming restaurant, where exquisite flavors and European culinary traditions blend harmoniously to create a dining experience like no other.
+      Nestled in a cozy corner, our restaurant is a haven for food enthusiasts seeking the finest in European cuisine.</p>
+    <p>As you step into our elegant dining space, you'll be greeted by a warm ambiance that sets the stage for a memorable gastronomic journey.</p>
+    <p> Our menu is a celebration of the diverse culinary heritage of Europe, showcasing a delightful array of dishes that capture the essence of each region's culinary artistry.</p>
+    <p>Our talented chefs source the finest ingredients, ensuring each dish is a masterpiece of taste and presentation.</p>
+      
+        <p class="visit-count fixed-bottom text-center">You have visited this page
+            {{ num_visits }} time{{ num_visits|pluralize }}.
+        </p>
+{% endblock %}
